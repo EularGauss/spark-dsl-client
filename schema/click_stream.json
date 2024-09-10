@@ -1,0 +1,104 @@
+{
+  "type": "record",
+  "name": "ClickstreamData",
+  "namespace": "com.example.clickstream",
+  "fields": [
+    {
+      "name": "event_id",
+      "type": "string",
+      "doc": "Unique identifier for each event (UUID)"
+    },
+    {
+      "name": "user_id",
+      "type": "string",
+      "doc": "Unique identifier for the user"
+    },
+    {
+      "name": "session_id",
+      "type": "string",
+      "doc": "Session ID for the user's browsing session"
+    },
+    {
+      "name": "event_type",
+      "type": {
+        "type": "enum",
+        "name": "EventType",
+        "symbols": ["CLICK", "PAGE_VIEW", "SCROLL", "HOVER", "NAVIGATION"]
+      },
+      "doc": "Type of event (e.g., click, page view, scroll)"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "logicalType": "timestamp-micros",
+      "doc": "Timestamp of the event in microseconds"
+    },
+    {
+      "name": "page_url",
+      "type": "string",
+      "doc": "URL of the page where the event occurred"
+    },
+    {
+      "name": "referrer_url",
+      "type": ["string", "null"],
+      "doc": "URL of the referrer page (if any), can be null"
+    },
+    {
+      "name": "user_agent",
+      "type": "string",
+      "doc": "Browser's user agent string"
+    },
+    {
+      "name": "browser",
+      "type": {
+        "type": "enum",
+        "name": "BrowserType",
+        "symbols": ["CHROME", "FIREFOX", "SAFARI", "EDGE", "OTHER"]
+      },
+      "doc": "Type of browser used for the session"
+    },
+    {
+      "name": "os",
+      "type": {
+        "type": "enum",
+        "name": "OSType",
+        "symbols": ["WINDOWS", "MACOS", "LINUX", "ANDROID", "IOS", "OTHER"]
+      },
+      "doc": "Operating system used for the session"
+    },
+    {
+      "name": "device_type",
+      "type": {
+        "type": "enum",
+        "name": "DeviceType",
+        "symbols": ["DESKTOP", "MOBILE", "TABLET", "OTHER"]
+      },
+      "doc": "Type of device used for the session"
+    },
+    {
+      "name": "screen_resolution",
+      "type": ["string", "null"],
+      "doc": "Screen resolution of the user's device, can be null"
+    },
+    {
+      "name": "geo_location",
+      "type": {
+        "type": "record",
+        "name": "GeoLocation",
+        "fields": [
+          { "name": "latitude", "type": ["double", "null"], "doc": "Latitude of the user's location" },
+          { "name": "longitude", "type": ["double", "null"], "doc": "Longitude of the user's location" }
+        ]
+      },
+      "doc": "Geographical location of the user, based on IP or GPS data"
+    },
+    {
+      "name": "interaction_details",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "doc": "Additional details of the interaction as key-value pairs (e.g., button clicked, scroll depth)"
+    }
+  ]
+}
