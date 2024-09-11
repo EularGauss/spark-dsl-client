@@ -1,37 +1,68 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
+
+from operators import allowed_operators
 
 app = Flask(__name__)
 
-# Sample data
-clickstream_data = [
-    {"event_id": "1", "user_id": "user1", "event_type": "CLICK"},
-    {"event_id": "2", "user_id": "user2", "event_type": "PAGE_VIEW"},
-    {"event_id": "3", "user_id": "user1", "event_type": "SCROLL"}
-]
 
-@app.route('/clickstream', methods=['GET'])
-def get_clickstream_data():
-    return jsonify(clickstream_data)
+# Function to initialize user state
+def initialize_user_state():
+    return {
+        'filters': [],
+        'transformations': [],
+        'aggregations': []
+    }
 
-@app.route('/clickstream/<event_id>', methods=['GET'])
-def get_clickstream_by_id(event_id):
-    event = next((item for item in clickstream_data if item["event_id"] == event_id), None)
-    if event:
-        return jsonify(event)
-    else:
-        return jsonify({"error": "Event not found"}), 404
 
-@app.route('/clickstream', methods=['POST'])
-def add_clickstream_event():
-    new_event = request.json
-    clickstream_data.append(new_event)
-    return jsonify(new_event), 201
+@app.route('/initialize', methods=['POST'])
+def initialize():
+    session['user_state'] = initialize_user_state()
+    return jsonify({"status": "State initialized"})
 
-@app.route('/clickstream/<event_id>', methods=['DELETE'])
-def delete_clickstream_event(event_id):
-    global clickstream_data
-    clickstream_data = [event for event in clickstream_data if event["event_id"] != event_id]
-    return jsonify({"message": "Event deleted successfully"}), 204
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/select_schema', methods=['POST'])
+def select_schema():
+    schema_data = request.json
+    session['selected_schema'] = schema_data.get('schema')
+
+    # Reset state if a new schema is selected
+    session['user_state'] = initialize_user_state()
+
+    return jsonify({
+        "status": "Schema selected",
+        "selected_schema": session['selected_schema'],
+        "user_state": session['user_state']
+    })
+
+
+@app.route('/add_filter', methods=['POST'])
+def add_filter():
+    filter_data = request.json
+    # Ensure user state is initialized
+    if 'user_state' not in session:
+        session['user_state'] = initialize_user_state()
+
+    session['user_state']['filters'].append(filter_data)
+    return jsonify({
+        "status": "Filter added",
+        "filters": session['user_state']['filters']
+    })
+
+
+@app.route('/add_transformation', methods=['POST'])
+def add_transformation():
+    transformation_data = request.json
+    # Ensure user state is initialized
+    if 'user_state' not in session:
+        session['user_state'] = initialize_user_state()
+
+    session['user_state']['transformations'].append(transformation_data)
+    return jsonify({
+        "status": "Transformation added",
+        "transformations": session['user_state']['transformations']
+    })
+
+
+@app.route('/get_state', methods=['GET'])
+def get_state():
+    return jsonify(session.get('user_state', initialize_user_state()))
