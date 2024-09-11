@@ -115,9 +115,3 @@ def map_column_type(type_value):
 
 
 # Example usage
-schema_path = 'root/schema/clickstream_schema.json'  # Replace with your actual schema path
-columns_with_types = get_columns_and_types(schema_path)
-
-# Print the columns and their types
-for column, col_type in columns_with_types.items():
-    print(f"Column: {column}, Type: {col_type}")
