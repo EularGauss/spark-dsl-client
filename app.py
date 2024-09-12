@@ -1,13 +1,17 @@
 from flask import Flask, jsonify, request, session
 
 from operators import allowed_operators
+from schema import parse_schema
 
 app = Flask(__name__)
+
+session = {}
 
 
 # Function to initialize user state
 def initialize_user_state():
     return {
+        'dataset_name': "df",
         'filters': [],
         'transformations': [],
         'aggregations': []
@@ -22,10 +26,11 @@ def initialize():
 
 @app.route('/select_schema', methods=['POST'])
 def select_schema():
-    schema_data = request.json
-    session['selected_schema'] = schema_data.get('schema')
+    schema_name = request.get_data("schema")
+    schema_data = parse_schema(schema_name)
+    session['selected_schema'] = schema_data.get('schemas')
 
-    # Reset state if a new schema is selected
+    # Reset state if a new schemas is selected
     session['user_state'] = initialize_user_state()
 
     return jsonify({
@@ -62,6 +67,10 @@ def add_transformation():
         "transformations": session['user_state']['transformations']
     })
 
+@app.route("/clear_session", method="POST")
+def clear_session():
+    session = {}
+    return jsonify({"status": "session cleared"})
 
 @app.route('/get_state', methods=['GET'])
 def get_state():
