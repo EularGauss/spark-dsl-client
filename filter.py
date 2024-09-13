@@ -40,9 +40,9 @@ class StringFilter(TypeFilter):
         elif operator == 'endsWith':
             return f"col(\"{column_name}\").endsWith(\"{value}\")"
         elif operator == 'isNull':
-            return f"col(\"{column_name}\") isNull"
+            return f"col(\"{column_name}\").isNull"
         elif operator == 'isNotNull':
-            return f"col(\"{column_name}\") isNotNull"
+            return f"col(\"{column_name}\").isNotNull"
         else:
             raise ValueError(f"Unsupported operator: {operator} for StringFilter.")
 

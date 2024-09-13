@@ -15,7 +15,7 @@ def parse_schema(schema_name):
         dict: A mapping of column names to their types and additional information.
     """
     # Construct the file path
-    file_path = schema_directory +  f"/{schema_name}.json"
+    file_path = schema_directory + f"/{schema_name}.json"
 
     # Check if the file exists
     if not os.path.isfile(file_path):
