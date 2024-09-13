@@ -1,14 +1,18 @@
 # Function to apply a filter condition
 from abc import ABC, abstractmethod
 
+from operators import allowed_operators
+
 
 class TypeFilter(ABC):
+    type = None
     @abstractmethod
     def generate_filter(self, column_name, operator, value):
         pass
 
 
 class LongFilter(TypeFilter):
+    type = 'long'
     def generate_filter(self, column_name, operator, value):
         if operator == '=':
             return f"col(\"{column_name}\") = {value}"
@@ -32,6 +36,7 @@ class LongFilter(TypeFilter):
 
 
 class StringFilter(TypeFilter):
+    type = 'string'
     def generate_filter(self, column_name, operator, value):
         if operator == 'contains':
             return f"col(\"{column_name}\").contains(\"{value}\")"
@@ -48,6 +53,7 @@ class StringFilter(TypeFilter):
 
 
 class ArrayFilter(TypeFilter):
+    type = 'array'
     def generate_filter(self, column_name, operator, value):
         if operator == 'contains':
             return f"col(\"{column_name}\").contains(\"{value}\")"
@@ -59,6 +65,7 @@ class ArrayFilter(TypeFilter):
 
 
 class MapFilter(TypeFilter):
+    type = 'map'
     def generate_filter(self, column_name, operator, key):
         if operator == 'containsKey':
             return f"col(\"{column_name}\").containsKey(\"{key}\")"
@@ -69,11 +76,12 @@ class MapFilter(TypeFilter):
 
 
 class EnumFilter(TypeFilter):
+    type = 'enum'
     def generate_filter(self, column_name, operator, value):
         if operator == '=':
-            return f"col(\"{column_name}\") === \"{value}\""
+            return f"col(\"{column_name}\") == \"{value}\""
         elif operator == '!=':
-            return f"col(\"{column_name}\") =!= \"{value}\""
+            return f"col(\"{column_name}\") != \"{value}\""
         elif operator == 'in':
             if isinstance(value, (list, tuple)):
                 value_list = ", ".join(map(lambda v: f'\"{v}\"', value))
@@ -85,21 +93,23 @@ class EnumFilter(TypeFilter):
 
 
 class NullFilter(TypeFilter):
+    type = 'null'
     def generate_filter(self, column_name, operator, _):
         if operator == 'isNull':
-            return f"col(\"{column_name}\") isNull"
+            return f"col(\"{column_name}\").isNull"
         elif operator == 'isNotNull':
-            return f"col(\"{column_name}\") isNotNull"
+            return f"col(\"{column_name}\").isNotNull"
         else:
             raise ValueError(f"Unsupported operator: {operator} for NullFilter.")
 
 
 class TimestampFilter(TypeFilter):
+    type = 'timestamp'
     def generate_filter(self, column_name, operator, value):
         if operator == '=':
-            return f"col(\"{column_name}\") === \"{value}\""
+            return f"col(\"{column_name}\") == \"{value}\""
         elif operator == '!=':
-            return f"col(\"{column_name}\") =!= \"{value}\""
+            return f"col(\"{column_name}\") != \"{value}\""
         elif operator == '>':
             return f"col(\"{column_name}\") > \"{value}\""
         elif operator == '<':
@@ -130,9 +140,31 @@ class FilterFactory:
             return MapFilter()
         elif column_type == "enum":
             return EnumFilter()
+        elif column_type.startswith("union:"):
+            # Extract the two types for union
+            types = column_type.split(":")[1].split(",")
+            if len(types) != 2:
+                raise ValueError("UnionFilter requires exactly two types.")
+            # Create filters for the two types in the union
+            filter1 = FilterFactory.create_filter(types[0].strip())
+            filter2 = FilterFactory.create_filter(types[1].strip())
+            return UnionFilter(filter1, filter2)
         elif column_type == "null":
             return NullFilter()
         else:
             raise ValueError(f"Unsupported column type: {column_type}")
 
 
+class UnionFilter(TypeFilter):
+    def __init__(self, filter1, filter2):
+        self.filter1 = filter1
+        self.filter2 = filter2
+
+    def generate_filter(self, column_name, operator, value):
+        for t in allowed_operators[self.filter1.type]:
+            if t[0] == operator:
+                return self.filter1.generate_filter(column_name, operator, value)
+        for t in allowed_operators[self.filter2.type]:
+            if t[0] == operator:
+                return self.filter2.generate_filter(column_name, operator, value)
+        raise ValueError(f"Unsupported operator: {operator} for UnionFilter.")

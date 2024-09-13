@@ -9,6 +9,7 @@ session = {}
 
 schemas = get_all_schema_names()
 
+
 # Function to initialize user state
 def initialize_user_state():
     return {
@@ -22,8 +23,7 @@ def initialize_user_state():
 
 @app.route('/initialize', methods=['POST'])
 def initialize():
-    base_dir = schema_directory
-
+    global session
     session = initialize_user_state()
     return jsonify({"status": "State initialized"})
 
@@ -34,6 +34,7 @@ def get_schemas():
     return jsonify({
         "schemas": schemas
     })
+
 
 @app.route('/schema', methods=['POST'])
 def select_schema():
@@ -56,13 +57,15 @@ def select_schema():
     })
 
 
-@app.route('/add_filter', methods=['POST'])
+@app.route('/filter/add', methods=['POST'])
 def add_filter():
     global session
     req = request.get_json()
-    col_name, type, operator, value = req.get("name"), req.get("type"), req.get("operator"), req.get("value")
+    col_name, type= req.get("name", ""), req.get("type", "")
+    operator, value = req.get("operator", ""), req.get("value", "")
     try:
-        filter_data = FilterFactory.create_filter(type).generate_filter(col_name, operator, value)
+        filter = FilterFactory.create_filter(type)
+        filter_data = filter.generate_filter(col_name, operator, value)
     except Exception as e:
         return jsonify({
             "status": "Invalid filter type",
@@ -80,7 +83,7 @@ def add_filter():
     })
 
 
-@app.route('/add_transformation', methods=['POST'])
+@app.route('/transformation/add', methods=['POST'])
 def add_transformation():
     global session
     transformation_data = request.json
@@ -95,13 +98,14 @@ def add_transformation():
     })
 
 
-@app.route("/clear_session", methods=["POST"])
+@app.route("/session/reset", methods=["POST"])
 def clear_session():
+    global session
     session = {}
     return jsonify({"status": "session cleared"})
 
 
-@app.route('/get_full_query', methods=['GET'])
+@app.route('/query', methods=['GET'])
 def get_full_query():
     query = session.get("dataset_name")
     for filter in session.get('filters', []):

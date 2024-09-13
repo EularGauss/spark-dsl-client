@@ -48,7 +48,10 @@ def parse_schema(schema_name):
         if isinstance(field_type, dict):
             # Check for specific type structures
             if field_type.get("type") == "enum":
-                return field_type.get("symbols", [])  # Return only symbols of the enum
+                return {
+                    "type": "enum",
+                    "types": field_type.get("symbols", [])
+                }
             elif field_type.get("type") == "record":
                 # For nested records, parse the fields of the record
                 parse_fields(field_type.get("fields", []))
@@ -60,6 +63,11 @@ def parse_schema(schema_name):
                     "type": "union",
                     "types": [get_type(t) for t in field_type.get("type")]
                 }
+        elif isinstance(field_type, list):
+            return {
+                "type": "union",
+                "types": [get_type(t) for t in field_type]
+            }
         else:
             return field_type  # For primitive types (e.g., string, long)
 
