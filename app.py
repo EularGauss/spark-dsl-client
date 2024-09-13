@@ -53,7 +53,14 @@ def add_filter():
     global session
     req = request.get_json()
     col_name, type, operator, value = req.get("name"), req.get("type"), req.get("operator"), req.get("value")
-    filter_data = FilterFactory.create_filter(type).generate_filter(col_name, operator, value)
+    try:
+        filter_data = FilterFactory.create_filter(type).generate_filter(col_name, operator, value)
+    except Exception as e:
+        return jsonify({
+            "status": "Invalid filter type",
+            "message": str(e),
+            "code": 400
+        })
     # Ensure user state is initialized
     if not session:
         session = initialize_user_state()

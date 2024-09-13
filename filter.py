@@ -75,8 +75,11 @@ class EnumFilter(TypeFilter):
         elif operator == '!=':
             return f"col(\"{column_name}\") =!= \"{value}\""
         elif operator == 'in':
-            value_list = ", ".join(map(lambda v: f'\"{v}\"', value))
-            return f"col(\"{column_name}\") in " + f'({value_list})'
+            if isinstance(value, (list, tuple)):
+                value_list = ", ".join(map(lambda v: f'\"{v}\"', value))
+                return f"col(\"{column_name}\") in " + f'({value_list})'
+            else:
+                return f"col(\"{column_name}\") in " + f'(\"{value}\")'
         else:
             raise ValueError(f"Unsupported operator: {operator} for EnumFilter.")
 
