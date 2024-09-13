@@ -73,15 +73,16 @@ class UnionParser(BaseParser):
         allowed_ops = []
         column_name = self.field.get("name")
         types = self.field.get("type", [])
-
+        name = column_name
         # Check that types are in list format
         if isinstance(types, list):
             for t in types:
                 if isinstance(t, str):
+                    name += f", {t}"
                     allowed_ops.extend(allowed_operators.get(t, []))
 
         return {
-            "name": column_name,
+            "name": name,
             "type": "union",
             "allowed_operators": allowed_ops
         }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
     const [selectedColumn, setSelectedColumn] = useState('');
@@ -16,7 +16,7 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
     };
 
     const handleValueChange = (event) => {
-        setValue(event.target.value);
+        setValue(event.target.value); // Update value input
     };
 
     const handleSubmit = (event) => {
@@ -31,34 +31,42 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
         };
 
         onFilterSubmit(filterData); // Pass the filter data to parent
+
+        // Clear form fields after submission
+        setSelectedColumn('');
+        setSelectedOperation('');
+        setValue('');
     };
 
-    // Determine allowed operators for the selected column
+    // Determine allowed operators for selected column
     const allowedOps = selectedColumn ? columnDetails[selectedColumn].allowed_operators : [];
     const columnType = selectedColumn ? columnDetails[selectedColumn].type : null;
 
-    // Check if column type is a union type or enum type
+    // Check for union type and enum type
     let derivedAllowedOps = allowedOps;
     let enumValues = [];
 
     if (columnType) {
         if (columnType.type === "union" && columnType.types) {
             derivedAllowedOps = [];
-            columnType.types.forEach(type => {
+            columnType.types.forEach((type) => {
                 const opsForType = columnDetails[type].allowed_operators;
-                opsForType.forEach(operator => {
+                opsForType.forEach((operator) => {
                     if (!derivedAllowedOps.some(op => op[0] === operator[0])) {
                         derivedAllowedOps.push(operator);
                     }
                 });
             });
         } else if (columnType.type === "enum" && columnType.values) {
-            enumValues = columnType.values; // Get enum values for the dropdown
+            enumValues = columnType.values; // Store enum values for display
         }
     }
 
+    // Check if all fields are filled to enable the submit button
+    const isSubmitDisabled = !(selectedColumn && selectedOperation && (value || enumValues.length > 0));
 
- return (
+
+return (
     <form onSubmit={handleSubmit}>
         <div className="filter-form-group">
             <label htmlFor="columnSelect">Column Name:</label>
@@ -109,7 +117,9 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
                 </>
             )}
 
-            <button type="submit">Submit Filter</button>
+            <button type="submit" disabled={!(selectedColumn && selectedOperation && (value || enumValues.length > 0))}>
+                Submit Filter
+            </button>
         </div>
     </form>
 );

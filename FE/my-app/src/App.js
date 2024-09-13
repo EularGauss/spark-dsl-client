@@ -53,7 +53,8 @@ const App = () => {
   };
 
   const handleFilterSubmit = (filterData) => {
-    console.log("Submitting filter:", filterData); // Debugging log
+
+
 
     // Call API to add the filter (adjust the URL and method according to your backend)
     fetch('http://localhost:5011/filter/add', {
@@ -67,16 +68,12 @@ const App = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Filter added successfully:', data);
-        // Optionally, you can update your query state here based on the response
-        setQuery(data.filters.join(', ')); // Example of updating the current query
+        fetchCurrentQuery(); // Now this will wait for the filter to be added successfully
       })
       .catch(error => {
         console.error('Error adding filter:', error);
       });
+
   };
 
   const handleReset = () => {
@@ -86,40 +83,63 @@ const App = () => {
     setShowFilterForm(false);
   };
 
-  return (
-    <div className="container">
-      <h1>Available Schemas</h1>
-      <button onClick={fetchSchemas}>Load Schemas</button>
-      {!showFilterForm ? (
-        <SchemaSelector
-          schemas={schemas}
-          selectedSchema={selectedSchema}
-          onChange={handleChangeSchema}
-        />
-      ) : (
-        <div>
-          <h2>Selected Schema: {selectedSchema}</h2>
-          <FilterForm
-            columns={columns}
-            columnDetails={columnDetails}
-            onFilterSubmit={handleFilterSubmit}
-          />
-          <button onClick={handleReset} className="reset-btn">Reset</button>
+    const fetchCurrentQuery = () => {
+    fetch('http://localhost:5011/query')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setQuery(data.query); // Update the current query state with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching current query:', error);
+      });
+  };
 
-          {/* Display the current query as a textarea */}
-          <div className="query-box">
-            <h3>Current Query:</h3>
-            <textarea
-              value={query}
-              readOnly
-              rows="3"
-              style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', resize: 'none' }}
+return (
+    <div className="container">
+        <h1>Available Schemas</h1>
+        <button onClick={fetchSchemas}>Load Schemas</button>
+        {!showFilterForm ? (
+            <SchemaSelector
+                schemas={schemas}
+                selectedSchema={selectedSchema}
+                onChange={handleChangeSchema}
             />
-          </div>
-        </div>
-      )}
+        ) : (
+            <div>
+                <h2>Selected Schema: {selectedSchema}</h2>
+                <FilterForm
+                    columns={columns}
+                    columnDetails={columnDetails}
+                    onFilterSubmit={handleFilterSubmit}
+                />
+                <button onClick={handleReset} className="reset-btn">Reset</button>
+
+                {/* Display the current query as a textarea */}
+                <div className="query-box">
+                    <h3>Current Query:</h3>
+                    <textarea
+                        value={query}
+                        readOnly
+                        rows="3"
+                        style={{
+                            width: '100%',
+                            padding: '10px',
+                            border: '1px solid #ccc',
+                            borderRadius: '5px',
+                            resize: 'none'
+                        }}
+                    />
+                </div>
+            </div>
+        )}
     </div>
-  );
+);
+
 };
 
 export default App;
