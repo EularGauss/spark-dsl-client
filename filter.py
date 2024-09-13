@@ -103,6 +103,25 @@ class NullFilter(TypeFilter):
             raise ValueError(f"Unsupported operator: {operator} for NullFilter.")
 
 
+class RecordFilter(TypeFilter):
+    type = 'record'
+
+    def __init__(self, inner_filters):
+        # inner_filters is expected to be a dictionary where keys are the field names
+        # and values are the corresponding TypeFilter objects for those fields
+        self.inner_filters = inner_filters
+
+    def generate_filter(self, column_name, operator, value):
+        # Generate filters for the inner fields of the record based on the operator
+        filters = []
+
+        for field_name, field_value in value.items():
+            if field_name in self.inner_filters:
+                inner_filter = self.inner_filters[field_name]
+                filters.append(inner_filter.generate_filter(f"{column_name}.{field_name}", operator, field_value))
+            else:
+                raise ValueError(f"Field '{field_name}' is not valid for the RecordFilter of type '{column_name}'.")
+
 class TimestampFilter(TypeFilter):
     type = 'timestamp'
     def generate_filter(self, column_name, operator, value):

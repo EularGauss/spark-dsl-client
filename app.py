@@ -35,16 +35,15 @@ def initialize():
 @app.route('/schemas', methods=['GET'])
 def get_schemas():
     global schemas
+
     return jsonify({
         "schemas": schemas
     })
 
 
-@app.route('/schema', methods=['POST'])
-def select_schema():
+@app.route('/schema/<schema_name>', methods=['POST'])
+def select_schema(schema_name):
     global session
-    req = request.get_json()
-    schema_name = req.get('schema')
     if not schema_name:
         return jsonify({
             "status": "Schema not provided",

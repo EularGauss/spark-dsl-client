@@ -111,7 +111,4 @@ def map_column_type(type_value):
             if isinstance(item, str):
                 return item  # Return the first simple type found
     else:
-        return 'unknown'  # Handle unknown types
-
-
-# Example usage
+        return 'unknown column type'
