@@ -14,8 +14,8 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-h1 {
-  color: #333; /* Dark color for heading */
+h1, h2 {
+  color: #333; /* Dark color for headings */
   text-align: center;
 }
 
@@ -43,30 +43,77 @@ label {
   color: #555; /* Slightly lighter color for label */
 }
 
-select {
+select, input[type="text"] {
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
+  width: calc(100% - 22px); /* Leave space for padding and borders */
   font-size: 16px; /* Match font size with button text */
-  background-color: #f9f9f9; /* Light background for the select */
+  background-color: #f9f9f9; /* Light background for the select & input fields */
   transition: border-color 0.3s; /* Smooth border color transition */
 }
 
-select:focus {
+select:focus, input[type="text"]:focus {
   border-color: #007bff; /* Change border color on focus */
   outline: none; /* Remove default outline */
 }
 
-option {
-  padding: 10px; /* Improve option padding */
-  background-color: #ffffff; /* White background for options */
-  color: #333; /* Dark color for option text */
+.field-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-h2 {
-  color: #007bff; /* Use primary color for highlighting selected schema */
-  text-align: center;
-  margin-top: 20px;
+.field-group select,
+.field-group input {
+  padding: 10px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1; /* Makes the fields take equal space */
+}
+
+.field-group input {
+  flex: 2; /* Larger space for text input */
+}
+
+.filter-form-group {
+  margin-bottom: 20px;
+}
+
+.filter-form-group label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.filter-form-group select,
+.filter-form-group input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.filter-form-group button {
+  padding: 10px 15px;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+ }
+
+.reset-btn {
+  background-color: #dc3545; /* Bootstrap danger color */
+}
+
+.reset-btn:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+.fill-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
 }
