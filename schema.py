@@ -4,6 +4,15 @@ import os
 schema_directory = os.getcwd() + "/schemas"
 
 
+def get_all_schema_names():
+    """
+    Returns a list of all the schema names available in the schema directory.
+
+    Returns:
+        list: A list of schema names.
+    """
+    return [f.split(".")[0] for f in os.listdir(schema_directory) if f.endswith(".json")]
+
 def parse_schema(schema_name):
     """
     Parses the Avro-like schemas from a JSON file and returns a mapping of column names to their types and attributes.
@@ -58,13 +67,3 @@ def parse_schema(schema_name):
     parse_fields(schema.get("fields", []))
 
     return parsed_map
-
-#
-# # Example usage
-# if __name__ == '__main__':
-#     try:
-#         schema_name = 'click_stream'  # Specify the schemas name without .json
-#         parsed_schema = parse_schema(schema_name)
-#         print(json.dumps(parsed_schema, indent=2))
-#     except Exception as e:
-#         print(f"Error: {e}")

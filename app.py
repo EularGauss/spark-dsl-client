@@ -1,13 +1,13 @@
 from flask import Flask, jsonify, request, session
 
 from filter import FilterFactory
-from operators import allowed_operators
-from schema import parse_schema
+from schema import parse_schema, schema_directory, get_all_schema_names
 
 app = Flask(__name__)
 
 session = {}
 
+schemas = get_all_schema_names()
 
 # Function to initialize user state
 def initialize_user_state():
@@ -22,12 +22,20 @@ def initialize_user_state():
 
 @app.route('/initialize', methods=['POST'])
 def initialize():
-    global session
+    base_dir = schema_directory
+
     session = initialize_user_state()
     return jsonify({"status": "State initialized"})
 
 
-@app.route('/select_schema', methods=['POST'])
+@app.route('/schemas', methods=['GET'])
+def get_schemas():
+    global schemas
+    return jsonify({
+        "schemas": schemas
+    })
+
+@app.route('/schema', methods=['POST'])
 def select_schema():
     global session
     req = request.get_json()
