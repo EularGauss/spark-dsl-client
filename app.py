@@ -1,9 +1,13 @@
 from flask import Flask, jsonify, request, session
+from flask_cors import CORS
 
 from filter import FilterFactory
 from schema import parse_schema, schema_directory, get_all_schema_names
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 session = {}
 
