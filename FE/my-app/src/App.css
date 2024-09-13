@@ -1,0 +1,72 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5; /* Light gray background for a soft look */
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px; /* Center container */
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff; /* White background for content area */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+h1 {
+  color: #333; /* Dark color for heading */
+  text-align: center;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white;
+  cursor: pointer;
+  font-size: 16px; /* Slightly larger text */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth effects for hover */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
+}
+
+label {
+  display: block;
+  margin: 10px 0;
+  font-weight: bold;
+  color: #555; /* Slightly lighter color for label */
+}
+
+select {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 16px; /* Match font size with button text */
+  background-color: #f9f9f9; /* Light background for the select */
+  transition: border-color 0.3s; /* Smooth border color transition */
+}
+
+select:focus {
+  border-color: #007bff; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+option {
+  padding: 10px; /* Improve option padding */
+  background-color: #ffffff; /* White background for options */
+  color: #333; /* Dark color for option text */
+}
+
+h2 {
+  color: #007bff; /* Use primary color for highlighting selected schema */
+  text-align: center;
+  margin-top: 20px;
+}
