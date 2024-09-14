@@ -106,4 +106,9 @@ def test_parse_schema():
     }
 
     parsed_schema = parse_schema("click_stream")
+    print(parsed_schema)
     assert parsed_schema == expected_output
+
+
+if __name__ == "main":
+    test_parse_schema()

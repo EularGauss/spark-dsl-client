@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
+    console.log("columns are " + columns + " columnDetails are " + Object.keys(columnDetails))
+    Object.entries(columnDetails).forEach(([column, details]) => {
+                console.log(`Column: ${column}`, details);
+            });
     const [selectedColumn, setSelectedColumn] = useState('');
     const [selectedOperation, setSelectedOperation] = useState('');
     const [value, setValue] = useState('');
+
+
 
     const handleColumnChange = (event) => {
         setSelectedColumn(event.target.value);
@@ -40,12 +46,12 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
 
     // Determine allowed operators for selected column
     const allowedOps = selectedColumn ? columnDetails[selectedColumn].allowed_operators : [];
-    const columnType = selectedColumn ? columnDetails[selectedColumn].type : null;
+    const columnType = selectedColumn ? columnDetails[selectedColumn] : null;
 
     // Check for union type and enum type
     let derivedAllowedOps = allowedOps;
     let enumValues = [];
-
+      console.log(columnType)
     if (columnType) {
         if (columnType.type === "union" && columnType.types) {
             derivedAllowedOps = [];
@@ -57,8 +63,9 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
                     }
                 });
             });
-        } else if (columnType.type === "enum" && columnType.values) {
-            enumValues = columnType.values; // Store enum values for display
+        } else if (columnType.type === "enum" && columnType.symbols) {
+        console.log(columnType)
+            enumValues = columnType.symbols; // Store enum values for display
         }
     }
 
@@ -67,61 +74,61 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
 
 
 return (
-    <form onSubmit={handleSubmit}>
-        <div className="filter-form-group">
-            <label htmlFor="columnSelect">Column Name:</label>
-            <select id="columnSelect" value={selectedColumn} onChange={handleColumnChange} required>
-                <option value="">Select Column</option>
-                {columns.map((column, index) => {
-                    const columnTypeDetails = columnDetails[column];
-                    const displayType = columnTypeDetails?.type?.type ? columnTypeDetails.type.type : columnTypeDetails.type;
+        <form onSubmit={handleSubmit}>
+            <div className="filter-form-group">
+                <label htmlFor="columnSelect">Column Name:</label>
+                <select id="columnSelect" value={selectedColumn} onChange={handleColumnChange} required>
+                    <option value="">Select Column</option>
+                    {columns.map((column, index) => {
+                        const columnTypeDetails = columnDetails[column];
+                        const displayType = columnTypeDetails?.type?.type ? columnTypeDetails.type.type : columnTypeDetails.type;
 
-                    return (
-                        <option key={index} value={column}>
-                            {column} ({displayType})  {/* Display column name and type */}
-                        </option>
-                    );
-                })}
-            </select>
+                        return (
+                            <option key={index} value={column}>
+                                {column} ({displayType})  {/* Display column name and type */}
+                            </option>
+                        );
+                    })}
+                </select>
 
-            <label htmlFor="operationSelect">Operation:</label>
-            <select id="operationSelect" value={selectedOperation} onChange={handleOperationChange} required>
-                <option value="">Select Operation</option>
-                {derivedAllowedOps.map((operator, index) => (
-                    <option key={index} value={operator[0]}>{operator[0]}</option>
-                ))}
-            </select>
+                <label htmlFor="operationSelect">Operation:</label>
+                <select id="operationSelect" value={selectedOperation} onChange={handleOperationChange} required>
+                    <option value="">Select Operation</option>
+                    {derivedAllowedOps.map((operator, index) => (
+                        <option key={index} value={operator[0]}>{operator[0]}</option>
+                    ))}
+                </select>
 
-            {/* Conditional rendering for enum values */}
-            {columnType && columnType.type === "enum" ? (
-                <>
-                    <label htmlFor="valueSelect">Enum Values:</label>
-                    <select id="valueSelect" value={value} onChange={handleValueChange} required>
-                        <option value="">Select Value</option>
-                        {enumValues.map((enumValue, index) => (
-                            <option key={index} value={enumValue}>{enumValue}</option>
-                        ))}
-                    </select>
-                </>
-            ) : (
-                <>
-                    <label htmlFor="valueInput">Value:</label>
-                    <input
-                        type="text"
-                        id="valueInput"
-                        value={value}
-                        onChange={handleValueChange}
-                        placeholder="Enter value"
-                        required
-                    />
-                </>
-            )}
+                {/* Conditional rendering for enum values */}
+                {columnType && columnType.type === "enum" ? (
+                    <>
+                        <label htmlFor="valueSelect">Enum Values:</label>
+                        <select id="valueSelect" value={value} onChange={handleValueChange} required>
+                            <option value="">Select Value</option>
+                            {enumValues.map((enumValue, index) => (
+                                <option key={index} value={enumValue}>{enumValue}</option>
+                            ))}
+                        </select>
+                    </>
+                ) : (
+                    <>
+                        <label htmlFor="valueInput">Value:</label>
+                        <input
+                            type="text"
+                            id="valueInput"
+                            value={value}
+                            onChange={handleValueChange}
+                            placeholder="Enter value"
+                            required
+                        />
+                    </>
+                )}
 
-            <button type="submit" disabled={!(selectedColumn && selectedOperation && (value || enumValues.length > 0))}>
-                Submit Filter
-            </button>
-        </div>
-    </form>
-);
+                <button type="submit" disabled={!(selectedColumn && selectedOperation && (value || enumValues.length > 0))}>
+                    Add Filter
+                </button>
+            </div>
+        </form>
+    );
 }
 export default FilterForm;

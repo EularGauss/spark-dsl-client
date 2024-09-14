@@ -1,5 +1,15 @@
 from abc import ABC, abstractmethod
 
+
+allowed_transformations = [
+        {"name": "map", "requires_lambda": True},
+        {"name": "filter", "requires_lambda": True},
+        {"name": "flatMap", "requires_lambda": True},
+        {"name": "groupByKey", "requires_lambda": False},
+        {"name": "reduceByKey", "requires_lambda": True},
+        {"name": "distinct", "requires_lambda": False}
+    ]
+
 class Transformation(ABC):
     def __init__(self):
         pass

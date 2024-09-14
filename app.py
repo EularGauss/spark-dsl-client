@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from filter import FilterFactory
 from schema import parse_schema, schema_directory, get_all_schema_names
+from transform import allowed_transformations
 
 app = Flask(__name__)
 
@@ -83,6 +84,14 @@ def add_filter():
     return jsonify({
         "status": "Filter added",
         "filters": session['filters']
+    })
+
+
+@app.route('/transformations', methods=['GET'])
+def get_transformations():
+    return jsonify({
+        "status": "success",
+        "transformations": allowed_transformations
     })
 
 

@@ -37,6 +37,22 @@ class PrimitiveParser(BaseParser):
         }
 
 
+class EnumParser(BaseParser):
+    def __init__(self, field):
+        self.field = field
+
+    def parse(self):
+        column_name = self.field.get("name")
+        column_type = self.field.get("type")
+        symbols = self.field.get("symbols")
+        return {
+            "name": column_name,
+            "type": column_type,
+            "allowed_operators": allowed_operators.get(column_type, []),
+            "symbols": symbols
+        }
+
+
 class RecordParser(BaseParser):
     def __init__(self, field, prefix=""):
         super().__init__(field,)
@@ -56,7 +72,7 @@ class RecordParser(BaseParser):
                 parsed_fields.update(nested_parser.parse(full_column_name + "."))
             elif isinstance(column_type, dict) and column_type.get("type") == "enum":
                 # Added handling for enum types
-                primitive_parser = PrimitiveParser(f)
+                primitive_parser = EnumParser(f)
                 parsed_fields[full_column_name] = primitive_parser.parse()
             elif isinstance(column_type, list) and all(isinstance(t, str) for t in column_type):
                 union_parser = UnionParser(f)
@@ -98,7 +114,7 @@ def parse_schema(schema):
                 if column_type.get("type") == "record":  # Check for record type
                     parser = RecordParser(field,field.get("name"))
                 elif column_type.get("type") == "enum":  # Check for enum type
-                    parser = PrimitiveParser(field.get("type"))  # Assuming PrimitiveParser handles enums
+                    parser = EnumParser(field.get("type"))  # Assuming PrimitiveParser handles enums
                 else:
                     continue  # Skip unknown types
             elif isinstance(column_type, list):

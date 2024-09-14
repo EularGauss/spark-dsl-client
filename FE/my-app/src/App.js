@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import './App.css';
 import SchemaSelector from './components/SchemaSelector';
 import FilterForm from './components/FilterForm';
+import TransformationForm from './components/TransformationForm';
 
 const App = () => {
   const [schemas, setSchemas] = useState([]);
+  const [transformations] = useState([])
   const [selectedSchema, setSelectedSchema] = useState('');
   const [showFilterForm, setShowFilterForm] = useState(false);
   const [columns, setColumns] = useState([]);
@@ -24,6 +26,18 @@ const App = () => {
       })
       .catch((error) => console.error('Error fetching schemas:', error));
   };
+
+  const fetchTransformations = () => {
+    fetch('http://localhost:5011/transformations')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Available Transformations:', data.transformations);
+            // Optional: Save them in state if you need to access them later
+        })
+        .catch(error => {
+            console.error('Error fetching transformations:', error);
+        });
+    };
 
   const handleChangeSchema = (event) => {
     const schemaName = event.target.value;
@@ -52,9 +66,9 @@ const App = () => {
       .catch(error => console.error('Error selecting schema:', error));
   };
 
+
+
   const handleFilterSubmit = (filterData) => {
-
-
 
     // Call API to add the filter (adjust the URL and method according to your backend)
     fetch('http://localhost:5011/filter/add', {
@@ -117,6 +131,7 @@ return (
                     columnDetails={columnDetails}
                     onFilterSubmit={handleFilterSubmit}
                 />
+
                 <button onClick={handleReset} className="reset-btn">Reset</button>
 
                 {/* Display the current query as a textarea */}
