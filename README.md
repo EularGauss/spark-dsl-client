@@ -1,5 +1,6 @@
 ## Overview 
 This tool is designed to streamline the process of generating Scala code for Apache Spark jobs based on Avro schema files. It provides a user-friendly interface for specifying filter, transformation, and aggregation operations, facilitating the rapid development of data processing jobs in a Spark environment.
+
 <img width="654" alt="Screenshot 2024-09-15 at 1 31 18 AM" src="https://github.com/user-attachments/assets/6a981fc7-a95f-4b30-b839-5743ccacaec7">
 
 
