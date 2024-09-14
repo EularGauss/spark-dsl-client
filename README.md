@@ -8,17 +8,18 @@ This tool is designed to streamline the process of generating Scala code for Apa
 3. **User-Friendly Interface:** The application includes dropdown menus for selecting schema files and specifying desired operations, simplifying the interaction for users.
 
 ## Usage Instructions
-To utilize the tool effectively, follow the steps outlined below:
-1. **Schema File Placement:** Store your Avro schema files in the `schemas` directory within the project structure.
-2. **Start the Application:** Use Docker Compose to build and run the application environment by executing the following command in your terminal:
+To utilize the tool effectively, follow the steps outlined below 
+1. You need to have `docker` and `docker-compose` installed on your machine. If you don't have them, you can install them by following the instructions provided [here](https://docs.docker.com/get-docker/).
+2. **Schema File Placement:** Store your Avro schema files in the `schemas` directory within the project structure.
+3. **Start the Application:** Use Docker Compose to build and run the application environment by executing the following command in your terminal:
 ```bash
 docker-compose up
 ```
-3. **Select Schema:** Once the application is running, access the interface on `localhost:3000` where you can select your desired schema file from a dropdown menu.
-4. **Specify Operations:** Choose the appropriate filter, transformation, or aggregation queries from the provided dropdown lists. These options will dictate how the data is processed.
-5. **Generate Code:** Click the "Add *" buttons to produce the Scala code based on the selected schema and operations. The code will be displayed on the screen for review (in `Current query` area) and further use.
-6. Please note that the generated code is a template and may require additional modifications to suit your specific use case.
-7. You can choose the filter, transformation, and aggregation operations in any order but they will be applied in the order `Filter -> Transformation -> Aggregation` in the generated code.
+4. **Select Schema:** Once the application is running, access the interface on `localhost:3000` where you can select your desired schema file from a dropdown menu.
+5. **Specify Operations:** Choose the appropriate filter, transformation, or aggregation queries from the provided dropdown lists. These options will dictate how the data is processed.
+6. **Generate Code:** Click the "Add *" buttons to produce the Scala code based on the selected schema and operations. The code will be displayed on the screen for review (in `Current query` area) and further use.
+7. Please note that the generated code is a template and may require additional modifications to suit your specific use case.
+8. You can choose the filter, transformation, and aggregation operations in any order but they will be applied in the order `Filter -> Transformation -> Aggregation` in the generated code.
 
 ### Limitations
 While the tool is powerful, several limitations must be considered:
