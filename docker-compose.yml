@@ -1,0 +1,24 @@
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5011:5011"
+    networks:
+      - network
+
+  react-app:
+    build:
+      context: ./FE/my-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - flask-app
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
