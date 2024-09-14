@@ -35,6 +35,29 @@ class LongFilter(TypeFilter):
             raise ValueError(f"Unsupported operator: {operator} for LongFilter.")
 
 
+class DoubleFilter(TypeFilter):
+    type = 'double'
+    def generate_filter(self, column_name, operator, value):
+        if operator == '=':
+            return f"col(\"{column_name}\") = {value}"
+        elif operator == '!=':
+            return f"col(\"{column_name}\") != {value}"
+        elif operator == '>':
+            return f"col(\"{column_name}\") > {value}"
+        elif operator == '<':
+            return f"col(\"{column_name}\") < {value}"
+        elif operator == '>=':
+            return f"col(\"{column_name}\") >= {value}"
+        elif operator == '<=':
+            return f"col(\"{column_name}\") <= {value}"
+        elif operator == 'between':
+            if isinstance(value, (list, tuple)) and len(value) == 2:
+                return f"col(\"{column_name}\") >= {value[0]} && col(\"{column_name}\") <= {value[1]}"
+            else:
+                raise ValueError("For 'between' operator, value must be a tuple or list of two items.")
+        else:
+            raise ValueError(f"Unsupported operator: {operator} for LongFilter.")
+
 class StringFilter(TypeFilter):
     type = 'string'
     def generate_filter(self, column_name, operator, value):
@@ -151,6 +174,8 @@ class FilterFactory:
     def create_filter(column_type):
         if column_type == "long":
             return LongFilter()
+        elif column_type == "double":
+            return DoubleFilter()
         elif column_type == "string":
             return StringFilter()
         elif column_type == "array":

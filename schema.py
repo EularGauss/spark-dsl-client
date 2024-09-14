@@ -94,12 +94,11 @@ class UnionParser(BaseParser):
         if isinstance(types, list):
             for t in types:
                 if isinstance(t, str):
-                    name += f", {t}"
                     allowed_ops.extend(allowed_operators.get(t, []))
 
         return {
             "name": name,
-            "type": "union",
+            "type": "union:" + ",".join([t for t in types if isinstance(t, str)]),
             "allowed_operators": allowed_ops
         }
 
