@@ -4,8 +4,9 @@ This tool is designed to streamline the process of generating Scala code for Apa
 
 ## Features
 1. **Avro Schema Processing:** The tool accepts Avro schema files, which define the structure of the data. This allows users to leverage a standard format for data serialization when working with Spark.
-2. **Scala Code Generation:** Upon receiving an Avro schema, the tool automatically generates the corresponding Scala code tailored for Spark jobs, enhancing development efficiency.
-3. **User-Friendly Interface:** The application includes dropdown menus for selecting schema files and specifying desired operations, simplifying the interaction for users.
+2. **Automatic type detection:** Automatic detection of the schema fields and their data types.
+3. **Scala Code Generation:** Upon receiving an Avro schema, the tool automatically generates the corresponding Scala code tailored for Spark jobs, enhancing development efficiency.
+4. **User-Friendly Interface:** The application includes dropdown menus for selecting schema files and specifying desired operations, simplifying the interaction for users.
 
 ## Usage Instructions
 To utilize the tool effectively, follow the steps outlined below 
