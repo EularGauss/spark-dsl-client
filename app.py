@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 from filter import FilterFactory
 from schema import parse_schema, schema_directory, get_all_schema_names
-from transform import allowed_transformations
+from transform import allowed_transformations, TransformationFactory
 
 app = Flask(__name__)
 
@@ -102,11 +102,19 @@ def add_transformation():
     # Ensure user state is initialized
     if not session:
         session = initialize_user_state()
-
-    session['transformations'].append(transformation_data)
+    try:
+        transformation = TransformationFactory.create_transformation(transformation_data.get("type"), transformation_data.get("function"))
+        filter_data = transformation.generate_transform()
+    except Exception as e:
+        return jsonify({
+            "status": "Invalid filter type",
+            "message": str(e),
+            "code": 400
+        })
+    session['transformations'].append(filter_data)
     return jsonify({
         "status": "Transformation added",
-        "transformations": session['user_state']['transformations']
+        "transformations": session['transformations']
     })
 
 
@@ -123,9 +131,9 @@ def get_full_query():
     for filter in session.get('filters', []):
         query += f".filter({filter})"
     for transformation in session.get('transformations', []):
-        query += f".transform({transformation})"
-    for aggreation in session.get('transformations', []):
-        query += f".aggs({aggreation})"
+        query += f".{transformation}"
+    for aggreation in session.get('aggreations', []):
+        query += f".{aggreation}"
     return jsonify({"query": query})
 
 

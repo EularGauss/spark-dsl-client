@@ -33,6 +33,9 @@ const TransformationForm = ({ transformations, onTransformationSubmit }) => {
     return (
         <form onSubmit={handleSubmit}>
             <div className="transformation-form-group">
+                <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                    <h1>Transform</h1>
+                </div>
                 <label htmlFor="transformationSelect">Select Transformation:</label>
                 <select
                     id="transformationSelect"
@@ -49,21 +52,31 @@ const TransformationForm = ({ transformations, onTransformationSubmit }) => {
                 </select>
 
                 {/* Display the input for the lambda function only if the selected transformation requires it */}
-                {selectedTransformation && transformations.find(t => t.name === selectedTransformation)?.requires_lambda && (
-                    <div>
-                        <label htmlFor="lambdaFunctionInput">Scala Function:</label>
-                        <input
-                            type="text"
-                            id="lambdaFunctionInput"
-                            value={lambdaFunction}
-                            onChange={handleLambdaChange}
-                            placeholder="Enter Scala function (if required)"
-                            required // This can be optional based on your requirements
-                        />
-                    </div>
+               {selectedTransformation && (
+                    // Check if the selected transformation requires a lambda function
+                    transformations.find(t => t.name === selectedTransformation)?.requires_lambda ? (
+                        <div>
+                            <label htmlFor="lambdaFunctionInput">Scala Function:</label>
+                            <input
+                                type="text"
+                                id="lambdaFunctionInput"
+                                value={lambdaFunction}
+                                onChange={handleLambdaChange}
+                                placeholder="Enter Scala function (if required)"
+                                required // Optional based on your application needs
+                            />
+                        </div>
+                    ) : null // Do not render anything if it doesn't require a lambda function
                 )}
-
-                <button type="submit">Add Transformation</button>
+                <button
+                    type="submit"
+                    disabled={
+                        !selectedTransformation ||
+                        (transformations.find(t => t.name === selectedTransformation)?.requires_lambda && !lambdaFunction)
+                    }
+                >
+                    Add Transformation
+                </button>
             </div>
         </form>
     );

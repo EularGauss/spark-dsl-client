@@ -86,18 +86,4 @@ class TransformationFactory:
             return DistinctTransformation()
         else:
             raise ValueError(f"Unknown transformation type: {transformation_type}")
-# Example Usage
-# if __name__ == "__main__":
-#     dataset = [1, 2, 3, 4, 5]
-#
-#     transformations = [
-#         MapTransformation("lambda x: x ** 2"),
-#         FilterTransformation("lambda x: x % 2 == 0"),
-#         FlatMapTransformation("lambda x: (x, x ** 2)"),
-#         GroupByKeyTransformation(dataset),  # No lambda needed
-#         ReduceByKeyTransformation("lambda x, y: x + y"),
-#         DistinctTransformation(dataset)
-#     ]
-#
-#     for transformation in transformations:
-#         print(transformation.generate_transform())
+

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
-    console.log("columns are " + columns + " columnDetails are " + Object.keys(columnDetails))
     Object.entries(columnDetails).forEach(([column, details]) => {
                 console.log(`Column: ${column}`, details);
             });
@@ -76,6 +75,9 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
 return (
         <form onSubmit={handleSubmit}>
             <div className="filter-form-group">
+                 <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                    <h1>Filter</h1>
+                </div>
                 <label htmlFor="columnSelect">Column Name:</label>
                 <select id="columnSelect" value={selectedColumn} onChange={handleColumnChange} required>
                     <option value="">Select Column</option>
