@@ -16,7 +16,6 @@ allowed_operators = {
         ('<', 'symbol'),
         ('>=', 'symbol'),
         ('<=', 'symbol'),
-        ('between', 'method', "double_input")
     ],
     'double': [
         ('=', 'symbol'),
@@ -25,12 +24,10 @@ allowed_operators = {
         ('<', 'symbol'),
         ('>=', 'symbol'),
         ('<=', 'symbol'),
-        ('between', 'method', "double_input")
     ],
     'enum': [
         ('=', 'symbol'),
         ('!=', 'symbol'),
-        ('in', 'method', "list_input")
     ],
     'map': [
         ('containsKey', 'method', 'single_input'),
@@ -47,7 +44,6 @@ allowed_operators = {
         ('<', 'symbol'),
         ('>=', 'symbol'),
         ('<=', 'symbol'),
-        ('between', 'method', "double_input")
     ],
     'null': [
         ('isNull', 'method', "no_input"),

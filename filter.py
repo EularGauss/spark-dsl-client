@@ -59,7 +59,7 @@ class ArrayFilter(TypeFilter):
             return f"col(\"{column_name}\").contains(\"{value}\")"
         elif operator == 'in':
             value_list = ', '.join(map(lambda v: f'\"{v}\"', value))
-            return f"col(\"{column_name}\") in ({value_list})"
+            return f"col(\"{column_name}\").isin({value_list})"
         else:
             raise ValueError(f"Unsupported operator: {operator} for ArrayFilter.")
 

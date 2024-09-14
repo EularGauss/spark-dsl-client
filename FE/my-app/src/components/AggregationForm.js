@@ -31,8 +31,8 @@ const AggregationForm = ({ aggregations, columns, onAggregationSubmit }) => {
     };
 
     const disableAggregationBtn = () => {
+        if ( !selectedAggregation) return true;
         var requiresColumn = aggregations.filter(e => e.name === selectedAggregation && e.requires_column);
-        console.log('requiresColumn = ' + requiresColumn);
         if (requiresColumn.length === 0) return false;
         return !columnName;
     };
@@ -50,7 +50,7 @@ const AggregationForm = ({ aggregations, columns, onAggregationSubmit }) => {
                     onChange={handleAggregationChange}
                     required
                 >
-                    <option value="">Select Aggregation</option>
+                    <option value="">Select Transformation</option>
                     {aggregations.map((aggregation, index) => (
                         <option key={index} value={aggregation.name}>
                             {aggregation.name} {/* Display the name of the aggregation */}
@@ -69,7 +69,6 @@ const AggregationForm = ({ aggregations, columns, onAggregationSubmit }) => {
                             onChange={handleColumnNameChange}
                             required
                         >
-                            <option value="">Select Column</option>
                             {columns.map((column, index) => (
                                 <option key={index} value={column}>
                                     {column} {/* Display column name */}

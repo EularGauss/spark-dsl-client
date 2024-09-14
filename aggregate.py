@@ -28,7 +28,7 @@ class SumAggregation(Aggregation):
         self.column_name = column_name
 
     def generate_aggregation(self):
-        return f"sum({self.column_name})"
+        return f"sum(\"{self.column_name}\")"
 
 
 class AverageAggregation(Aggregation):
@@ -36,7 +36,7 @@ class AverageAggregation(Aggregation):
         self.column_name = column_name
 
     def generate_aggregation(self):
-        return f"avg({self.column_name})"
+        return f"avg(\"{self.column_name}\")"
 
 
 class MinAggregation(Aggregation):
@@ -44,7 +44,7 @@ class MinAggregation(Aggregation):
         self.column_name = column_name
 
     def generate_aggregation(self):
-        return f"min({self.column_name})"
+        return f"min(\"{self.column_name}\")"
 
 
 class MaxAggregation(Aggregation):
@@ -52,7 +52,7 @@ class MaxAggregation(Aggregation):
         self.column_name = column_name
 
     def generate_aggregation(self):
-        return f"max({self.column_name})"
+        return f"max(\"{self.column_name}\")"
 
 
 class GroupByAggregation(Aggregation):
@@ -60,7 +60,7 @@ class GroupByAggregation(Aggregation):
         self.group_by_column = group_by_column
 
     def generate_aggregation(self):
-        return f"groupBy({self.group_by_column})"
+        return f"groupBy(\"{self.group_by_column}\")"
 
 
 class AggregateFactory:

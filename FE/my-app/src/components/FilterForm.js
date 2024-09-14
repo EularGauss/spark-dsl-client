@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../App.css';
 
 const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
     Object.entries(columnDetails).forEach(([column, details]) => {
@@ -31,7 +32,7 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
         const filterData = {
             name: selectedColumn,
             operator: selectedOperation,
-            value: value,
+            value: value || '',
             type: columnDetails[selectedColumn]?.type // Get the type based on the selected column
         };
 
@@ -46,6 +47,13 @@ const FilterForm = ({ columns, columnDetails, onFilterSubmit }) => {
     // Determine allowed operators for selected column
     const allowedOps = selectedColumn ? columnDetails[selectedColumn].allowed_operators : [];
     const columnType = selectedColumn ? columnDetails[selectedColumn] : null;
+
+    const disable = () => {
+        const req_disable = !selectedColumn || !selectedOperation
+        if (req_disable) return true;
+        if (selectedOperation === "isNull" || selectedOperation === "isNotNull") return false;
+        return !(value || enumValues.length > 0);
+    }
 
     // Check for union type and enum type
     let derivedAllowedOps = allowedOps;
@@ -80,7 +88,6 @@ return (
                 </div>
                 <label htmlFor="columnSelect">Column Name:</label>
                 <select id="columnSelect" value={selectedColumn} onChange={handleColumnChange} required>
-                    <option value="">Select Column</option>
                     {columns.map((column, index) => {
                         const columnTypeDetails = columnDetails[column];
                         const displayType = columnTypeDetails?.type?.type ? columnTypeDetails.type.type : columnTypeDetails.type;
@@ -106,13 +113,12 @@ return (
                     <>
                         <label htmlFor="valueSelect">Enum Values:</label>
                         <select id="valueSelect" value={value} onChange={handleValueChange} required>
-                            <option value="">Select Value</option>
                             {enumValues.map((enumValue, index) => (
                                 <option key={index} value={enumValue}>{enumValue}</option>
                             ))}
                         </select>
                     </>
-                ) : (
+                ) : (selectedOperation && (selectedOperation === "isNull" || selectedOperation === "isNotNull")? null : (
                     <>
                         <label htmlFor="valueInput">Value:</label>
                         <input
@@ -124,9 +130,9 @@ return (
                             required
                         />
                     </>
-                )}
+                ))}
 
-                <button type="submit" disabled={!(selectedColumn && selectedOperation && (value || enumValues.length > 0))}>
+                <button type="submit" disabled={disable()}>
                     Add Filter
                 </button>
             </div>

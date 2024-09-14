@@ -117,3 +117,11 @@ select:focus, input[type="text"]:focus {
   font-size: 14px;
   margin-top: 10px;
 }
+
+button:disabled {
+    background-color: #f0f0f0; /* Light gray background */
+    color: #a0a0a0;           /* Light gray text */
+    cursor: not-allowed;      /* Change the cursor style */
+    opacity: 0.5;             /* Faded effect */
+    border: 1px solid #ccc;   /* Light border */
+}
