@@ -15,4 +15,4 @@ def test_string_filter():
 
 def test_array_filter():
     array_filter = FilterFactory.create_filter("array")
-    assert array_filter.generate_filter("column_name", "in", ["value1", "value2"]) == "col(\"column_name\") in (\"value1\", \"value2\")"
+    assert array_filter.generate_filter("column_name", "in", ["value1", "value2"]) == "col(\"column_name\").isin(\"value1\", \"value2\")"
