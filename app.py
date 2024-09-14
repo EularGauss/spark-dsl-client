@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 
+from aggregate import allowed_aggregations, AggregateFactory
 from filter import FilterFactory
 from schema import parse_schema, schema_directory, get_all_schema_names
 from transform import allowed_transformations, TransformationFactory
@@ -94,6 +95,13 @@ def get_transformations():
         "transformations": allowed_transformations
     })
 
+@app.route('/aggregations', methods=['GET'])
+def get_aggregations():
+    return jsonify({
+        "status": "success",
+        "aggregations": allowed_aggregations
+    })
+
 
 @app.route('/transformation/add', methods=['POST'])
 def add_transformation():
@@ -118,6 +126,29 @@ def add_transformation():
     })
 
 
+@app.route('/aggregations/add', methods=['POST'])
+def add_aggregations():
+    global session
+    aggregation_data = request.json
+    # Ensure user state is initialized
+    if not session:
+        session = initialize_user_state()
+    try:
+        aggregations = AggregateFactory.create_aggregation(aggregation_data.get("type"), aggregation_data.get("column"))
+        aggregation_data = aggregations.generate_aggregation()
+    except Exception as e:
+        return jsonify({
+            "status": "Invalid filter type",
+            "message": str(e),
+            "code": 400
+        })
+    session['aggregations'].append(aggregation_data)
+    return jsonify({
+        "status": "Transformation added",
+        "aggregations": session['aggregations']
+    })
+
+
 @app.route("/session/reset", methods=["POST"])
 def clear_session():
     global session
@@ -132,7 +163,7 @@ def get_full_query():
         query += f".filter({filter})"
     for transformation in session.get('transformations', []):
         query += f".{transformation}"
-    for aggreation in session.get('aggreations', []):
+    for aggreation in session.get('aggregations', []):
         query += f".{aggreation}"
     return jsonify({"query": query})
 

@@ -3,10 +3,12 @@ import './App.css';
 import SchemaSelector from './components/SchemaSelector';
 import FilterForm from './components/FilterForm';
 import TransformationForm from './components/TransformationForm';
+import AggregationForm from './components/AggregationForm';
 
 const App = () => {
   const [schemas, setSchemas] = useState([]);
-  const [transformations, setTransformations] = useState([])
+  const [transformations, setTransformations] = useState([]);
+  const [aggregations, setAggregations] = useState([]);
   const [selectedSchema, setSelectedSchema] = useState('');
   const [showFilterForm, setShowFilterForm] = useState(false);
   const [columns, setColumns] = useState([]);
@@ -26,19 +28,6 @@ const App = () => {
       })
       .catch((error) => console.error('Error fetching schemas:', error));
   };
-
-  const fetchTransformations = () => {
-    fetch('http://localhost:5011/transformations')
-        .then(response => response.json())
-        .then(data => {
-            console.log('Available Transformations:', data.transformations);
-            // Optional: Save them in state if you need to access them later
-            setTransformations(data.transformations);
-        })
-        .catch(error => {
-            console.error('Error fetching transformations:', error);
-        });
-    };
 
   const handleChangeSchema = (event) => {
     const schemaName = event.target.value;
@@ -81,8 +70,23 @@ const App = () => {
         }
       })
       .catch(error => console.error('Error selecting schema:', error));
-  };
 
+     fetch('http://localhost:5011/aggregations', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          setAggregations(data.aggregations);
+        } else {
+          console.error(data.message); // Handle error if needed.
+        }
+      })
+      .catch(error => console.error('Error selecting schema:', error));
+  };
 
 
   const handleFilterSubmit = (filterData) => {
@@ -129,6 +133,30 @@ const App = () => {
 
   };
 
+  const handleAggregationSubmit = (filterData) => {
+
+    // Call API to add the filter (adjust the URL and method according to your backend)
+    fetch('http://localhost:5011/aggregations/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filterData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        fetchCurrentQuery(); // Now this will wait for the transformation to be added successfully
+      })
+      .catch(error => {
+        console.error('Error adding filter:', error);
+      });
+
+  };
+
+
+
   const handleReset = () => {
     setColumns([]);
     setColumnDetails({});
@@ -155,7 +183,7 @@ const App = () => {
 return (
     <div className="container">
         <h1>Available Schemas</h1>
-        <button onClick={fetchSchemas}>Load Schemas</button>
+        <button onClick={fetchSchemas}>Import Schemas</button>
         {!showFilterForm ? (
             <SchemaSelector
                 schemas={schemas}
@@ -173,6 +201,12 @@ return (
                 <TransformationForm
                     transformations={transformations}
                     onTransformationSubmit={handleTransformationSubmit}
+                  />
+
+                  <AggregationForm
+                    aggregations={aggregations}
+                    columns={columns}
+                    onAggregationSubmit={handleAggregationSubmit}
                   />
 
                 <button onClick={handleReset} className="reset-btn">Reset</button>

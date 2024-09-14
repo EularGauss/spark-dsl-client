@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AggregationForm = ({ aggregations, onAggregationSubmit }) => {
+const AggregationForm = ({ aggregations, columns, onAggregationSubmit }) => {
     const [selectedAggregation, setSelectedAggregation] = useState('');
     const [columnName, setColumnName] = useState('');
 
@@ -9,6 +9,7 @@ const AggregationForm = ({ aggregations, onAggregationSubmit }) => {
         setColumnName(''); // Reset column name when changing aggregation
     };
 
+// !selectedAggregation || (selectedAggregation === '')
     const handleColumnNameChange = (event) => {
         setColumnName(event.target.value);
     };
@@ -29,9 +30,19 @@ const AggregationForm = ({ aggregations, onAggregationSubmit }) => {
         setColumnName('');
     };
 
+    const disableAggregationBtn = () => {
+        var requiresColumn = aggregations.filter(e => e.name === selectedAggregation && e.requires_column);
+        console.log('requiresColumn = ' + requiresColumn);
+        if (requiresColumn.length === 0) return false;
+        return !columnName;
+    };
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="aggregation-form-group">
+                <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                    <h1>Aggregate</h1>
+                </div>
                 <label htmlFor="aggregationSelect">Select Aggregation:</label>
                 <select
                     id="aggregationSelect"
@@ -48,21 +59,26 @@ const AggregationForm = ({ aggregations, onAggregationSubmit }) => {
                 </select>
 
                 {/* Display input for column name if aggregation requires it */}
-                {selectedAggregation && (
+               {selectedAggregation &&
+                    aggregations.find(agg => agg.name === selectedAggregation)?.requires_column ? (
                     <div>
                         <label htmlFor="columnNameInput">Column Name:</label>
-                        <input
-                            type="text"
+                        <select
                             id="columnNameInput"
                             value={columnName}
                             onChange={handleColumnNameChange}
-                            placeholder="Enter column name"
-                            required={selectedAggregation !== "groupBy"} // Example: groupBy might not need a column
-                        />
+                            required
+                        >
+                            <option value="">Select Column</option>
+                            {columns.map((column, index) => (
+                                <option key={index} value={column}>
+                                    {column} {/* Display column name */}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                )}
-
-                <button type="submit" disabled={!selectedAggregation || (selectedAggregation !== "groupBy" && !columnName)}>
+                ) : null}
+                <button type="submit" disabled={disableAggregationBtn()}>
                     Add Aggregation
                 </button>
             </div>

@@ -1,5 +1,13 @@
 from abc import ABC, abstractmethod
 
+allowed_aggregations = [
+    {"name": "count", "requires_column": False},
+    {"name": "sum", "requires_column": True},
+    {"name": "avg", "requires_column": True},
+    {"name": "min", "requires_column": True},
+    {"name": "max", "requires_column": True},
+    {"name": "groupBy", "requires_column": True}
+]
 
 class Aggregation(ABC):
     def __init__(self):
@@ -57,7 +65,7 @@ class GroupByAggregation(Aggregation):
 
 class AggregateFactory:
     @staticmethod
-    def create_aggregation(aggregation_type, column_name):
+    def create_aggregation(aggregation_type, column_name=None):
         if aggregation_type == 'count':
             return CountAggregation()
         elif aggregation_type == 'sum':

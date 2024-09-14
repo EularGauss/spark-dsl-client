@@ -4,10 +4,10 @@ allowed_operators = {
     'string': [
         ('=', 'symbol'),
         ('!=', 'symbol'),
-        ('contains', 'method'),
-        ('startsWith', 'method'),
-        ('endsWith', 'method'),
-        ('regex', 'method')
+        ('contains', 'method', 'single_input'),
+        ('startsWith', 'method', 'single_input'),
+        ('endsWith', 'method', 'single_input'),
+        ('regex', 'method', 'single_input')
     ],
     'long': [
         ('=', 'symbol'),
@@ -16,7 +16,7 @@ allowed_operators = {
         ('<', 'symbol'),
         ('>=', 'symbol'),
         ('<=', 'symbol'),
-        ('between', 'method')
+        ('between', 'method', "double_input")
     ],
     'double': [
         ('=', 'symbol'),
@@ -25,19 +25,19 @@ allowed_operators = {
         ('<', 'symbol'),
         ('>=', 'symbol'),
         ('<=', 'symbol'),
-        ('between', 'method')
+        ('between', 'method', "double_input")
     ],
     'enum': [
         ('=', 'symbol'),
         ('!=', 'symbol'),
-        ('in', 'method')
+        ('in', 'method', "list_input")
     ],
     'map': [
-        ('containsKey', 'method'),
-        ('containsValue', 'method')
+        ('containsKey', 'method', 'single_input'),
+        ('containsValue', 'method', 'single_input'),
     ],
     'array': [
-        ('array_contains', 'method'),
+        ('array_contains', 'method', 'single_input'),
         ('in', 'method')
     ],
     'timestamp': [
@@ -47,11 +47,11 @@ allowed_operators = {
         ('<', 'symbol'),
         ('>=', 'symbol'),
         ('<=', 'symbol'),
-        ('between', 'method')
+        ('between', 'method', "double_input")
     ],
     'null': [
-        ('isNull', 'method'),
-        ('isNotNull', 'method')
+        ('isNull', 'method', "no_input"),
+        ('isNotNull', 'method' "no_input")
     ]
 }
 
